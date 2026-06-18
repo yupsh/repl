@@ -1,0 +1,27 @@
+# Filesystem sources and shell-style expansion.
+#
+# run.sh runs this against a seeded fixture tree (fruits.txt, poem.txt,
+# people.csv, sub/note.md) with HOME holding welcome.txt, so the output is
+# reproducible. Run by hand from any directory with such files.
+
+# ls lists the current directory.
+ls
+
+# Globs expand against the filesystem (unquoted tokens only).
+ls *.txt
+
+# A quoted glob stays literal — expansion is suppressed.
+echo '*.txt'
+
+# find walks a tree. Quote --name so the pattern reaches find unexpanded.
+find . --type f
+find . --type f --name '*.txt'
+
+# A file argument on the first stage is read as pipeline input.
+wc -l fruits.txt
+
+# Count each distinct line (uniq -c needs sorted input).
+sort fruits.txt | uniq -c
+
+# Tilde expands to $HOME.
+cat ~/welcome.txt

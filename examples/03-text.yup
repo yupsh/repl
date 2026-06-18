@@ -1,0 +1,21 @@
+# Text transforms — reshape a stream line by line.
+
+# Reverse each line.
+echo hello | rev
+
+# Translate characters: spaces to underscores, then a case fold.
+echo hello world | tr ' ' _
+echo HELLO | tr A-Z a-z
+
+# Substitute with sed.
+echo banana | sed 's/a/A/'
+
+# Number lines two ways.
+seq 1 3 | nl
+seq 1 3 | cat -n
+
+# Sort in reverse.
+seq 1 5 | sort -r
+
+# Count adjacent duplicates (uniq -c) over a repeated source.
+yes hi | head -n 3 | uniq -c

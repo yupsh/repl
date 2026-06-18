@@ -1,0 +1,5 @@
+# Perl one-liners (run.sh skips this file when perl is not installed).
+
+# -p runs the expression over each line and prints the result.
+echo hello | perl -p 's/l/L/g'
+echo hello world | perl -p 's/ /_/g'

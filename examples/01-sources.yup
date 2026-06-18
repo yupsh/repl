@@ -1,0 +1,19 @@
+# Sources — commands that originate a stream, needing no upstream input.
+#
+# Pipe this file into yupsh:  yupsh < examples/01-sources.yup
+# (Comment and blank lines are ignored by the REPL.)
+
+# echo joins its arguments into a single line.
+echo Hello from the yupsh REPL
+
+# emit writes literal text verbatim.
+emit one literal line
+
+# seq generates a numeric sequence; flags tune the formatting.
+seq 1 5
+seq -w 1 10
+seq -s , 1 5
+
+# yes repeats a line forever — always bound it with head.
+yes | head -n 3
+yes hi | head -n 2

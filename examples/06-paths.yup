@@ -1,0 +1,13 @@
+# Path helpers — basename and dirname treat their arguments as data, not files.
+
+# Strip the directory, leaving the final component.
+basename /path/to/some/file.txt
+
+# Strip the suffix as well.
+basename -s .txt /path/to/some/file.txt
+
+# Keep only the directory.
+dirname /path/to/some/file.txt
+
+# They also work mid-pipeline on emitted paths.
+emit /usr/local/bin/yupsh | basename

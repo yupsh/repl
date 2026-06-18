@@ -1,0 +1,22 @@
+# Makefile.local — repl repo-local customization (NOT shared).
+#
+# The shared Makefile `-include`s this at its tail, so it is read LAST. Set the
+# documented hook variables and ADD new targets here ONLY — never redefine a
+# target the shared Makefile already declares. The shared Makefile stays
+# byte-identical to gomatic/build; all repl divergence lives here.
+
+# Tested set: repl's internal/ packages. cmd/yupsh is the composition root (the
+# main/run/runInteractive entrypoint) — dropped from the flat `cover` gate.
+COVER_PKGS := ./internal/...
+
+# Absolute path to this directory (trailing slash), so sibling scripts resolve
+# the same from any working directory.
+here := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+
+.PHONY: examples
+examples: ## Run the full example suite through the yupsh binary
+	$(here)examples/run.sh
+
+.PHONY: integration
+integration: ## Run opt-in black-box integration tests (builds the real binary)
+	$(GO) test -tags integration ./...
