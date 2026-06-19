@@ -67,6 +67,7 @@ func TestEveryCommandBuilds(t *testing.T) {
 		"tr a b",
 		"tr -d a",
 		"uniq -d",
+		"uniq -c",
 		"wc -l -w -c -m -L",
 		"xargs -n 2",
 		"git status --oneline",

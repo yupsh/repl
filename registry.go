@@ -168,7 +168,10 @@ var (
 		numFlag(intMaker(func(n int) any { return tail.TailLines(n) })),
 	}
 
-	uniqFlags = flagSet{boolFlag("d", "repeated", uniq.UniqDuplicatesOnly)}
+	uniqFlags = flagSet{
+		boolFlag("d", "repeated", uniq.UniqDuplicatesOnly),
+		boolFlag("c", "count", uniq.UniqCount),
+	}
 
 	shufFlags = flagSet{
 		valueFlag("n", "head-count", intMaker(func(n int) any { return shuf.ShufCount(n) })),
