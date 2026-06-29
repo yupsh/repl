@@ -24,14 +24,14 @@ import (
 	"github.com/yupsh/repl/internal/expansion"
 )
 
-// appVersion is the binary's version string. It defaults to "dev" for local
+// version is the binary's version string. It defaults to "dev" for local
 // builds and is overridden at release time via the linker:
-// -ldflags "-X main.appVersion=<version>" (set by goreleaser).
-var appVersion = "dev"
+// -ldflags "-X main.version=<version>" (set by goreleaser).
+var version = "dev"
 
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == "--version" {
-		fmt.Printf("yupsh version %s\n", appVersion)
+		fmt.Printf("yupsh version %s\n", version)
 		return
 	}
 	if err := execute(); err != nil {
