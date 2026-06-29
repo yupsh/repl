@@ -44,10 +44,10 @@ type BuildFunc func(fs afero.Fs, positional flags.Argv, opts []any) (Segment, er
 // commands whose arguments are literal text (echo, yes, emit) or belong to an
 // external program (git, exec).
 type Builder struct {
-	Flags   flags.Set
 	Build   BuildFunc
-	Raw     bool
 	Summary string
+	Flags   flags.Set
+	Raw     bool
 }
 
 // toFiles converts positional arguments to framework File values.

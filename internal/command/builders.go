@@ -3,9 +3,6 @@ package command
 import (
 	"strings"
 
-	gloo "github.com/gloo-foo/framework"
-	"github.com/spf13/afero"
-
 	echo "github.com/gloo-foo/cmd-echo"
 	emit "github.com/gloo-foo/cmd-emit"
 	find "github.com/gloo-foo/cmd-find"
@@ -17,6 +14,8 @@ import (
 	shuf "github.com/gloo-foo/cmd-shuf"
 	tr "github.com/gloo-foo/cmd-tr"
 	yes "github.com/gloo-foo/cmd-yes"
+	gloo "github.com/gloo-foo/framework"
+	"github.com/spf13/afero"
 
 	"github.com/yupsh/repl/internal/constants"
 	"github.com/yupsh/repl/internal/flags"
@@ -31,26 +30,26 @@ type commandMaker func(positional flags.Argv, opts []any) gloo.Command[[]byte, [
 
 // filter adapts a filterMaker into a BuildFunc, routing positional arguments to
 // the pipeline source as files.
-func filter(make filterMaker) BuildFunc {
+func filter(maker filterMaker) BuildFunc {
 	return func(_ afero.Fs, positional flags.Argv, opts []any) (Segment, error) {
-		return Segment{Command: make(opts), Files: toFiles(positional)}, nil
+		return Segment{Command: maker(opts), Files: toFiles(positional)}, nil
 	}
 }
 
 // command adapts a commandMaker into a BuildFunc; the command reads the pipeline
 // input directly, so positionals are not routed to a file source.
-func command(make commandMaker) BuildFunc {
+func command(maker commandMaker) BuildFunc {
 	return func(_ afero.Fs, positional flags.Argv, opts []any) (Segment, error) {
-		return Segment{Command: make(positional, opts)}, nil
+		return Segment{Command: maker(positional, opts)}, nil
 	}
 }
 
 // literal adapts a filterMaker into a BuildFunc whose positional arguments are
 // the command's input lines rather than filenames — used by path processors
 // (basename, dirname) that transform their arguments as data.
-func literal(make filterMaker) BuildFunc {
+func literal(maker filterMaker) BuildFunc {
 	return func(_ afero.Fs, positional flags.Argv, opts []any) (Segment, error) {
-		return Segment{Command: make(opts), Inputs: toLines(positional)}, nil
+		return Segment{Command: maker(opts), Inputs: toLines(positional)}, nil
 	}
 }
 

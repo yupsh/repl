@@ -15,7 +15,7 @@ import (
 // command), and builds its segment — the same resolution the line domain
 // performs, reduced to what the command package needs to exercise its builders
 // and flag makers.
-func build(t *testing.T, fs afero.Fs, name string, args ...string) (Segment, error) {
+func build(t *testing.T, fs afero.Fs, name string, args ...string) error {
 	t.Helper()
 	b, ok := Registry()[Name(name)]
 	if !ok {
@@ -26,13 +26,15 @@ func build(t *testing.T, fs afero.Fs, name string, args ...string) (Segment, err
 		argv[i] = flags.Argument(a)
 	}
 	if b.Raw {
-		return b.Build(fs, argv, nil)
+		_, err := b.Build(fs, argv, nil)
+		return err
 	}
 	opts, positional, err := flags.Parse(b.Flags, argv)
 	if err != nil {
-		return Segment{}, err
+		return err
 	}
-	return b.Build(fs, positional, opts)
+	_, err = b.Build(fs, positional, opts)
+	return err
 }
 
 // TestEveryCommandBuilds exercises every registry builder and value-flag maker,
@@ -93,7 +95,7 @@ func TestEveryCommandBuilds(t *testing.T) {
 		{"grep", "pattern", "file.txt"}, // grep with files → toFiles
 	}
 	for _, line := range lines {
-		if _, err := build(t, fs, line[0], line[1:]...); err != nil {
+		if err := build(t, fs, line[0], line[1:]...); err != nil {
 			t.Errorf("build %v: %v", line, err)
 		}
 	}
@@ -102,23 +104,23 @@ func TestEveryCommandBuilds(t *testing.T) {
 func TestBuilderErrors(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	cases := []struct {
-		line    []string
 		wantErr constants.Error
+		line    []string
 	}{
-		{[]string{"grep"}, constants.ErrMissingArgument},
-		{[]string{"sed"}, constants.ErrMissingArgument},
-		{[]string{"tr"}, constants.ErrMissingArgument},
-		{[]string{"seq", "x"}, constants.ErrInvalidNumber},
-		{[]string{"head", "-n", "x"}, constants.ErrInvalidNumber},
-		{[]string{"shuf", "--seed", "x"}, constants.ErrInvalidNumber},
-		{[]string{"cut", "-f", "x"}, constants.ErrInvalidNumber},
-		{[]string{"shuf", "-i", "nodash"}, constants.ErrInvalidFlagValue},
-		{[]string{"shuf", "-i", "x-3"}, constants.ErrInvalidNumber},
-		{[]string{"shuf", "-i", "1-x"}, constants.ErrInvalidNumber},
-		{[]string{"nl", "-b", "z"}, constants.ErrInvalidFlagValue},
+		{line: []string{"grep"}, wantErr: constants.ErrMissingArgument},
+		{line: []string{"sed"}, wantErr: constants.ErrMissingArgument},
+		{line: []string{"tr"}, wantErr: constants.ErrMissingArgument},
+		{line: []string{"seq", "x"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"head", "-n", "x"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"shuf", "--seed", "x"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"cut", "-f", "x"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"shuf", "-i", "nodash"}, wantErr: constants.ErrInvalidFlagValue},
+		{line: []string{"shuf", "-i", "x-3"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"shuf", "-i", "1-x"}, wantErr: constants.ErrInvalidNumber},
+		{line: []string{"nl", "-b", "z"}, wantErr: constants.ErrInvalidFlagValue},
 	}
 	for _, c := range cases {
-		_, err := build(t, fs, c.line[0], c.line[1:]...)
+		err := build(t, fs, c.line[0], c.line[1:]...)
 		if err == nil || !strings.Contains(err.Error(), string(c.wantErr)) {
 			t.Errorf("build %v err = %v, want %q", c.line, err, c.wantErr)
 		}

@@ -62,15 +62,20 @@ func TestPlanFirstStageSources(t *testing.T) {
 	cases := []struct {
 		name   string
 		stdin  string
-		stages []Stage
 		want   string
+		stages []Stage
 	}{
-		{"stdin default (no stages)", "hi\n", nil, "hi\n"},
-		{"source command", "", []Stage{seg(t, fs, "echo", "hi")}, "hi\n"},
-		{"literal inputs", "", []Stage{seg(t, fs, "basename", "/a/b.txt")}, "b.txt\n"},
-		{"file source", "", []Stage{seg(t, fs, "cat", "/f.txt")}, "a\nb\n"},
-		{"default filter over stdin", "x\n", []Stage{seg(t, fs, "cat")}, "x\n"},
-		{"two stages compose", "", []Stage{seg(t, fs, "echo", "hi"), seg(t, fs, "cat")}, "hi\n"},
+		{name: "stdin default (no stages)", stdin: "hi\n", stages: nil, want: "hi\n"},
+		{name: "source command", stdin: "", stages: []Stage{seg(t, fs, "echo", "hi")}, want: "hi\n"},
+		{name: "literal inputs", stdin: "", stages: []Stage{seg(t, fs, "basename", "/a/b.txt")}, want: "b.txt\n"},
+		{name: "file source", stdin: "", stages: []Stage{seg(t, fs, "cat", "/f.txt")}, want: "a\nb\n"},
+		{name: "default filter over stdin", stdin: "x\n", stages: []Stage{seg(t, fs, "cat")}, want: "x\n"},
+		{
+			name:   "two stages compose",
+			stdin:  "",
+			stages: []Stage{seg(t, fs, "echo", "hi"), seg(t, fs, "cat")},
+			want:   "hi\n",
+		},
 	}
 	for _, c := range cases {
 		got, err := run(t, fs, c.stdin, c.stages...)
@@ -91,12 +96,24 @@ func TestPlanRejectsMidPipeline(t *testing.T) {
 	}
 	cases := []struct {
 		name    string
-		stages  []Stage
 		wantErr constants.Error
+		stages  []Stage
 	}{
-		{"source after pipe", []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "echo", "b")}, constants.ErrSourceMidPipeline},
-		{"files after pipe", []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "cat", "/f.txt")}, constants.ErrArgsMidPipeline},
-		{"inputs after pipe", []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "basename", "/x/y")}, constants.ErrArgsMidPipeline},
+		{
+			name:    "source after pipe",
+			stages:  []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "echo", "b")},
+			wantErr: constants.ErrSourceMidPipeline,
+		},
+		{
+			name:    "files after pipe",
+			stages:  []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "cat", "/f.txt")},
+			wantErr: constants.ErrArgsMidPipeline,
+		},
+		{
+			name:    "inputs after pipe",
+			stages:  []Stage{seg(t, fs, "echo", "a"), seg(t, fs, "basename", "/x/y")},
+			wantErr: constants.ErrArgsMidPipeline,
+		},
 	}
 	for _, c := range cases {
 		_, err := run(t, fs, "", c.stages...)

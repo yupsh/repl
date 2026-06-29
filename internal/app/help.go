@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"sort"
 
 	"github.com/yupsh/repl/internal/command"
@@ -11,25 +10,25 @@ import (
 func (e Session) help() {
 	w := e.out
 	reg := command.Registry()
-	fmt.Fprintln(w, "yupsh REPL — available commands")
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Built-ins:")
-	fmt.Fprintln(w, "  help              show this message")
-	fmt.Fprintln(w, "  version           show version information")
-	fmt.Fprintln(w, "  clear             clear the screen")
-	fmt.Fprintln(w, "  exit, quit        leave the REPL")
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Commands:")
+	fprintln(w, "yupsh REPL — available commands")
+	fprintln(w)
+	fprintln(w, "Built-ins:")
+	fprintln(w, "  help              show this message")
+	fprintln(w, "  version           show version information")
+	fprintln(w, "  clear             clear the screen")
+	fprintln(w, "  exit, quit        leave the REPL")
+	fprintln(w)
+	fprintln(w, "Commands:")
 	for _, name := range sortedNames(reg) {
-		fmt.Fprintf(w, "  %-9s %s\n", name, reg[command.Name(name)].Summary)
+		fprintf(w, "  %-9s %s\n", name, reg[command.Name(name)].Summary)
 	}
-	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Pipelines: command1 | command2 | command3")
-	fmt.Fprintln(w, "Examples:")
-	fmt.Fprintln(w, "  echo hello world")
-	fmt.Fprintln(w, "  seq 1 10 | grep 5")
-	fmt.Fprintln(w, "  seq 1 100 | wc -l")
-	fmt.Fprintln(w)
+	fprintln(w)
+	fprintln(w, "Pipelines: command1 | command2 | command3")
+	fprintln(w, "Examples:")
+	fprintln(w, "  echo hello world")
+	fprintln(w, "  seq 1 10 | grep 5")
+	fprintln(w, "  seq 1 100 | wc -l")
+	fprintln(w)
 }
 
 // sortedNames returns the registry's command names in lexical order.

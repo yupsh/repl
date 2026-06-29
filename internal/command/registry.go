@@ -1,8 +1,6 @@
 package command
 
 import (
-	gloo "github.com/gloo-foo/framework"
-
 	base64 "github.com/gloo-foo/cmd-base64"
 	basename "github.com/gloo-foo/cmd-basename"
 	cat "github.com/gloo-foo/cmd-cat"
@@ -33,49 +31,192 @@ import (
 	uniq "github.com/gloo-foo/cmd-uniq"
 	wc "github.com/gloo-foo/cmd-wc"
 	xargs "github.com/gloo-foo/cmd-xargs"
+	gloo "github.com/gloo-foo/framework"
 
 	"github.com/yupsh/repl/internal/flags"
+)
+
+// Command keywords: the canonical name of every registry entry. Defined as
+// typed constants so each keyword has a single source of truth.
+const (
+	nameEcho     Name = "echo"
+	nameEmit     Name = "emit"
+	nameYes      Name = "yes"
+	nameSeq      Name = "seq"
+	nameLs       Name = "ls"
+	nameFind     Name = "find"
+	nameBase64   Name = "base64"
+	nameBasename Name = "basename"
+	nameCat      Name = "cat"
+	nameComm     Name = "comm"
+	nameCut      Name = "cut"
+	nameDiff     Name = "diff"
+	nameDirname  Name = "dirname"
+	nameHead     Name = "head"
+	nameHexdump  Name = "hexdump"
+	nameJoin     Name = "join"
+	nameJSON     Name = "json"
+	nameNl       Name = "nl"
+	namePaste    Name = "paste"
+	nameRev      Name = "rev"
+	nameShuf     Name = "shuf"
+	nameSort     Name = "sort"
+	nameSplit    Name = "split"
+	nameTac      Name = "tac"
+	nameTail     Name = "tail"
+	nameTee      Name = "tee"
+	nameUniq     Name = "uniq"
+	nameWc       Name = "wc"
+	nameXargs    Name = "xargs"
+	nameGrep     Name = "grep"
+	nameSed      Name = "sed"
+	nameTr       Name = "tr"
+	nameExec     Name = "exec"
+	nameGit      Name = "git"
+	namePerl     Name = "perl"
 )
 
 // Registry returns the command table. It is built fresh per caller so callers
 // never share mutable state.
 func Registry() map[Name]Builder {
 	return map[Name]Builder{
-		"echo":     {Raw: true, Build: buildEcho, Summary: "emit arguments as a line (source)"},
-		"emit":     {Raw: true, Build: buildEmit, Summary: "emit literal text (source)"},
-		"yes":      {Raw: true, Build: buildYes, Summary: "repeat a line until interrupted (source)"},
-		"seq":      {Flags: seqFlags, Build: buildSeq, Summary: "generate a numeric sequence (source)"},
-		"ls":       {Flags: lsFlags, Build: buildLs, Summary: "list directory entries (source)"},
-		"find":     {Flags: findFlags, Build: buildFind, Summary: "walk a directory tree (source)"},
-		"base64":   {Flags: base64Flags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return base64.Base64(o...) }), Summary: "base64 encode or decode"},
-		"basename": {Flags: basenameFlags, Build: literal(func(o []any) gloo.Command[[]byte, []byte] { return basename.Basename(o...) }), Summary: "strip directory and suffix"},
-		"cat":      {Flags: catFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return cat.Cat(o...) }), Summary: "concatenate with optional numbering"},
-		"comm":     {Flags: commFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return comm.Comm(o...) }), Summary: "compare sorted streams"},
-		"cut":      {Flags: cutFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return cut.Cut(o...) }), Summary: "select fields, bytes, or characters"},
-		"diff":     {Flags: diffFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return diff.Diff(o...) }), Summary: "compare streams line by line"},
-		"dirname":  {Build: literal(func(o []any) gloo.Command[[]byte, []byte] { return dirname.Dirname(o...) }), Summary: "strip last path component"},
-		"head":     {Flags: headFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return head.Head(o...) }), Summary: "output the first lines or bytes"},
-		"hexdump":  {Flags: hexdumpFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return hexdump.Hexdump(o...) }), Summary: "hex dump of input"},
-		"join":     {Flags: joinFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return join.Join(o...) }), Summary: "join lines on a common field"},
-		"json":     {Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return jsoncmd.Json(o...) }), Summary: "pretty-print JSON"},
-		"nl":       {Flags: nlFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return nl.Nl(o...) }), Summary: "number lines"},
-		"paste":    {Flags: pasteFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return paste.Paste(o...) }), Summary: "merge lines"},
-		"rev":      {Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return rev.Rev(o...) }), Summary: "reverse each line"},
-		"shuf":     {Flags: shufFlags, Build: buildShuf, Summary: "shuffle lines randomly"},
-		"sort":     {Flags: sortFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return sortcmd.Sort(o...) }), Summary: "sort lines"},
-		"split":    {Flags: splitFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return split.Split(o...) }), Summary: "split fields onto lines"},
-		"tac":      {Flags: tacFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return tac.Tac(o...) }), Summary: "reverse line order"},
-		"tail":     {Flags: tailFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return tail.Tail(o...) }), Summary: "output the last lines or bytes"},
-		"tee":      {Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return tee.Tee(o...) }), Summary: "pass input through unchanged"},
-		"uniq":     {Flags: uniqFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return uniq.Uniq(o...) }), Summary: "drop adjacent duplicate lines"},
-		"wc":       {Flags: wcFlags, Build: filter(func(o []any) gloo.Command[[]byte, []byte] { return wc.Wc(o...) }), Summary: "count lines, words, and bytes"},
-		"xargs":    {Flags: xargsFlags, Build: buildXargs, Summary: "run a command per argument group (or group fields into lines)"},
-		"grep":     {Flags: grepFlags, Build: buildGrep, Summary: "filter lines matching a pattern"},
-		"sed":      {Build: buildSed, Summary: "apply an s/// substitution"},
-		"tr":       {Flags: trFlags, Build: buildTr, Summary: "translate, delete, or squeeze characters"},
-		"exec":     {Raw: true, Build: command(func(p flags.Argv, _ []any) gloo.Command[[]byte, []byte] { return exec.Exec(p.Anys()...) }), Summary: "run an external program"},
-		"git":      {Raw: true, Build: command(func(p flags.Argv, _ []any) gloo.Command[[]byte, []byte] { return git.Git(p.Strings()...) }), Summary: "run git"},
-		"perl":     {Flags: perlFlags, Build: command(func(p flags.Argv, o []any) gloo.Command[[]byte, []byte] { return perl.Perl(append(p.Anys(), o...)...) }), Summary: "run a perl one-liner"},
+		nameEcho: {Raw: true, Build: buildEcho, Summary: "emit arguments as a line (source)"},
+		nameEmit: {Raw: true, Build: buildEmit, Summary: "emit literal text (source)"},
+		nameYes:  {Raw: true, Build: buildYes, Summary: "repeat a line until interrupted (source)"},
+		nameSeq:  {Flags: seqFlags, Build: buildSeq, Summary: "generate a numeric sequence (source)"},
+		nameLs:   {Flags: lsFlags, Build: buildLs, Summary: "list directory entries (source)"},
+		nameFind: {Flags: findFlags, Build: buildFind, Summary: "walk a directory tree (source)"},
+		nameBase64: {
+			Flags:   base64Flags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return base64.Base64(o...) }),
+			Summary: "base64 encode or decode",
+		},
+		nameBasename: {
+			Flags:   basenameFlags,
+			Build:   literal(func(o []any) gloo.Command[[]byte, []byte] { return basename.Basename(o...) }),
+			Summary: "strip directory and suffix",
+		},
+		nameCat: {
+			Flags:   catFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return cat.Cat(o...) }),
+			Summary: "concatenate with optional numbering",
+		},
+		nameComm: {
+			Flags:   commFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return comm.Comm(o...) }),
+			Summary: "compare sorted streams",
+		},
+		nameCut: {
+			Flags:   cutFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return cut.Cut(o...) }),
+			Summary: "select fields, bytes, or characters",
+		},
+		nameDiff: {
+			Flags:   diffFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return diff.Diff(o...) }),
+			Summary: "compare streams line by line",
+		},
+		nameDirname: {
+			Build:   literal(func(o []any) gloo.Command[[]byte, []byte] { return dirname.Dirname(o...) }),
+			Summary: "strip last path component",
+		},
+		nameHead: {
+			Flags:   headFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return head.Head(o...) }),
+			Summary: "output the first lines or bytes",
+		},
+		nameHexdump: {
+			Flags:   hexdumpFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return hexdump.Hexdump(o...) }),
+			Summary: "hex dump of input",
+		},
+		nameJoin: {
+			Flags:   joinFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return join.Join(o...) }),
+			Summary: "join lines on a common field",
+		},
+		nameJSON: {
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return jsoncmd.Json(o...) }),
+			Summary: "pretty-print JSON",
+		},
+		nameNl: {
+			Flags:   nlFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return nl.Nl(o...) }),
+			Summary: "number lines",
+		},
+		namePaste: {
+			Flags:   pasteFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return paste.Paste(o...) }),
+			Summary: "merge lines",
+		},
+		nameRev: {
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return rev.Rev(o...) }),
+			Summary: "reverse each line",
+		},
+		nameShuf: {Flags: shufFlags, Build: buildShuf, Summary: "shuffle lines randomly"},
+		nameSort: {
+			Flags:   sortFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return sortcmd.Sort(o...) }),
+			Summary: "sort lines",
+		},
+		nameSplit: {
+			Flags:   splitFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return split.Split(o...) }),
+			Summary: "split fields onto lines",
+		},
+		nameTac: {
+			Flags:   tacFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return tac.Tac(o...) }),
+			Summary: "reverse line order",
+		},
+		nameTail: {
+			Flags:   tailFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return tail.Tail(o...) }),
+			Summary: "output the last lines or bytes",
+		},
+		nameTee: {
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return tee.Tee(o...) }),
+			Summary: "pass input through unchanged",
+		},
+		nameUniq: {
+			Flags:   uniqFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return uniq.Uniq(o...) }),
+			Summary: "drop adjacent duplicate lines",
+		},
+		nameWc: {
+			Flags:   wcFlags,
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return wc.Wc(o...) }),
+			Summary: "count lines, words, and bytes",
+		},
+		nameXargs: {
+			Flags:   xargsFlags,
+			Build:   buildXargs,
+			Summary: "run a command per argument group (or group fields into lines)",
+		},
+		nameGrep: {Flags: grepFlags, Build: buildGrep, Summary: "filter lines matching a pattern"},
+		nameSed:  {Build: buildSed, Summary: "apply an s/// substitution"},
+		nameTr:   {Flags: trFlags, Build: buildTr, Summary: "translate, delete, or squeeze characters"},
+		nameExec: {
+			Raw: true,
+			Build: command(
+				func(p flags.Argv, _ []any) gloo.Command[[]byte, []byte] { return exec.Exec(p.Anys()...) },
+			),
+			Summary: "run an external program",
+		},
+		nameGit: {
+			Raw: true,
+			Build: command(
+				func(p flags.Argv, _ []any) gloo.Command[[]byte, []byte] { return git.Git(p.Strings()...) },
+			),
+			Summary: "run git",
+		},
+		namePerl: {
+			Flags: perlFlags,
+			Build: command(
+				func(p flags.Argv, o []any) gloo.Command[[]byte, []byte] { return perl.Perl(append(p.Anys(), o...)...) },
+			),
+			Summary: "run a perl one-liner",
+		},
 	}
 }
 
@@ -84,7 +225,9 @@ func Registry() map[Name]Builder {
 var (
 	base64Flags = flags.Set{flags.Bool("d", "decode", base64.Base64Decode)}
 
-	basenameFlags = flags.Set{flags.Value("s", "suffix", flags.StrMaker(func(s string) any { return basename.BasenameSuffix(s) }))}
+	basenameFlags = flags.Set{
+		flags.Value("s", "suffix", flags.StrMaker(func(s string) any { return basename.BasenameSuffix(s) })),
+	}
 
 	catFlags = flags.Set{
 		flags.Bool("n", "number", cat.CatNumberLines),
@@ -121,7 +264,9 @@ var (
 
 	hexdumpFlags = flags.Set{flags.Bool("C", "canonical", hexdump.HexdumpCanonical)}
 
-	joinFlags = flags.Set{flags.Value("t", "separator", flags.StrMaker(func(s string) any { return join.JoinSeparator(s) }))}
+	joinFlags = flags.Set{
+		flags.Value("t", "separator", flags.StrMaker(func(s string) any { return join.JoinSeparator(s) })),
+	}
 
 	nlFlags = flags.Set{
 		flags.Value("b", "body-numbering", nlBody),
@@ -152,7 +297,9 @@ var (
 		flags.Value("t", "field-separator", flags.StrMaker(func(s string) any { return sortcmd.SortDelimiter(s) })),
 	}
 
-	splitFlags = flags.Set{flags.Value("d", "delimiter", flags.StrMaker(func(s string) any { return split.SplitDelim(s) }))}
+	splitFlags = flags.Set{
+		flags.Value("d", "delimiter", flags.StrMaker(func(s string) any { return split.SplitDelim(s) })),
+	}
 
 	tacFlags = flags.Set{flags.Value("s", "separator", flags.StrMaker(func(s string) any { return tac.TacSep(s) }))}
 
@@ -177,7 +324,7 @@ var (
 			}
 			return shuf.ShufRange(lo, hi), nil
 		}),
-		flags.Bool("e", "echo", shufEchoMarker{}),
+		flags.Bool("e", string(nameEcho), shufEchoMarker{}),
 	}
 
 	wcFlags = flags.Set{

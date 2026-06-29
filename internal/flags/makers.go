@@ -8,31 +8,31 @@ import (
 )
 
 // IntMaker builds a value-flag Maker for an int-typed option.
-func IntMaker(make func(int) any) Maker {
+func IntMaker(maker func(int) any) Maker {
 	return func(value Argument) (any, error) {
 		n, err := AtoiArg(value)
 		if err != nil {
 			return nil, err
 		}
-		return make(n), nil
+		return maker(n), nil
 	}
 }
 
 // Int64Maker builds a value-flag Maker for an int64-typed option.
-func Int64Maker(make func(int64) any) Maker {
+func Int64Maker(maker func(int64) any) Maker {
 	return func(value Argument) (any, error) {
 		n, err := strconv.ParseInt(string(value), 10, 64)
 		if err != nil {
 			return nil, constants.ErrInvalidNumber.With(err, string(value))
 		}
-		return make(n), nil
+		return maker(n), nil
 	}
 }
 
 // StrMaker builds a value-flag Maker for a string-typed option.
-func StrMaker(make func(string) any) Maker {
+func StrMaker(maker func(string) any) Maker {
 	return func(value Argument) (any, error) {
-		return make(string(value)), nil
+		return maker(string(value)), nil
 	}
 }
 

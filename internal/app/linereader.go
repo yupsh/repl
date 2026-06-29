@@ -2,7 +2,6 @@ package app
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 )
 
@@ -36,7 +35,7 @@ func newScanReader(in io.Reader, out io.Writer) *scanReader {
 
 // ReadLine prints the prompt and returns the next line, or io.EOF at end.
 func (r *scanReader) ReadLine() (string, error) {
-	fmt.Fprint(r.out, Prompt)
+	fprint(r.out, Prompt)
 	if !r.scanner.Scan() {
 		if err := r.scanner.Err(); err != nil {
 			return "", err

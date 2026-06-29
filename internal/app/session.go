@@ -27,6 +27,16 @@ import (
 // gloo-foo/framework typed-stream API and the gloo-foo/cmd-* command modules.
 const Version = "0.2.0"
 
+// Built-in command keywords recognized by the REPL ahead of the command
+// registry. Defined as constants so each keyword has a single source of truth.
+const (
+	builtinExit    = "exit"
+	builtinQuit    = "quit"
+	builtinHelp    = "help"
+	builtinVersion = "version"
+	builtinClear   = "clear"
+)
+
 // Session is an immutable REPL instance wired to injected collaborators: a
 // LineReader for command input, an io.Reader for pipeline stdin, output and
 // error writers, and the line domain's Config (filesystem + home). Everything is
@@ -89,7 +99,7 @@ func (e Session) dispatch(ctx context.Context, line token.Line) (stop bool) {
 		return stop
 	}
 	if err := e.execute(ctx, line); err != nil {
-		fmt.Fprintf(e.errw, "yupsh: %v\n", err)
+		fprintf(e.errw, "yupsh: %v\n", err)
 	}
 	return false
 }
@@ -98,17 +108,17 @@ func (e Session) dispatch(ctx context.Context, line token.Line) (stop bool) {
 // and whether the loop should stop.
 func (e Session) builtin(line token.Line) (handled, stop bool) {
 	switch firstWord(line) {
-	case "exit", "quit":
-		fmt.Fprintln(e.out, "Goodbye!")
+	case builtinExit, builtinQuit:
+		fprintln(e.out, "Goodbye!")
 		return true, true
-	case "help":
+	case builtinHelp:
 		e.help()
 		return true, false
-	case "version":
-		fmt.Fprintf(e.out, "yupsh REPL v%s\n", Version)
+	case builtinVersion:
+		fprintf(e.out, "yupsh REPL v%s\n", Version)
 		return true, false
-	case "clear":
-		fmt.Fprint(e.out, "\033[H\033[2J")
+	case builtinClear:
+		fprint(e.out, "\033[H\033[2J")
 		return true, false
 	}
 	return false, false
@@ -126,10 +136,27 @@ func (e Session) execute(ctx context.Context, line token.Line) error {
 
 // banner prints the startup header.
 func (e Session) banner() {
-	fmt.Fprintf(e.out, "yupsh REPL v%s\n", Version)
-	fmt.Fprintln(e.out, "Yup Shell — a typed-stream REPL over gloo-foo/framework and cmd-* commands.")
-	fmt.Fprintln(e.out, "Type 'help' for commands, 'exit' to quit.")
-	fmt.Fprintln(e.out)
+	fprintf(e.out, "yupsh REPL v%s\n", Version)
+	fprintln(e.out, "Yup Shell — a typed-stream REPL over gloo-foo/framework and cmd-* commands.")
+	fprintln(e.out, "Type 'help' for commands, 'exit' to quit.")
+	fprintln(e.out)
+}
+
+// fprintf writes formatted output to w, deliberately ignoring the write error:
+// the REPL streams to a terminal or test buffer where a failed write is neither
+// recoverable nor actionable.
+func fprintf(w io.Writer, format string, a ...any) {
+	_, _ = fmt.Fprintf(w, format, a...)
+}
+
+// fprintln writes a line to w, ignoring the write error (see fprintf).
+func fprintln(w io.Writer, a ...any) {
+	_, _ = fmt.Fprintln(w, a...)
+}
+
+// fprint writes output to w, ignoring the write error (see fprintf).
+func fprint(w io.Writer, a ...any) {
+	_, _ = fmt.Fprint(w, a...)
 }
 
 // firstWord returns the leading whitespace-delimited word of a line.

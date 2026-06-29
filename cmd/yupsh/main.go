@@ -34,16 +34,22 @@ func main() {
 		fmt.Printf("yupsh version %s\n", appVersion)
 		return
 	}
+	if err := execute(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, "yupsh: %v\n", err)
+		os.Exit(1)
+	}
+}
 
+// execute wires the process resources to the session and runs the REPL. It is
+// split from main so the signal-context cleanup runs via defer before main
+// calls os.Exit on failure.
+func execute() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	// A failed home lookup is non-fatal: tilde expansion simply stays literal.
 	home, _ := os.UserHomeDir()
-	if err := run(ctx, afero.NewOsFs(), expansion.Home(home)); err != nil {
-		fmt.Fprintf(os.Stderr, "yupsh: %v\n", err)
-		os.Exit(1)
-	}
+	return run(ctx, afero.NewOsFs(), expansion.Home(home))
 }
 
 // run selects an interactive terminal session when stdin is a TTY, and a plain

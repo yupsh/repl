@@ -22,7 +22,7 @@ type Home string
 // Expand expands a command's argument tokens into words, applying tilde then
 // glob expansion to unquoted tokens only.
 func Expand(fs afero.Fs, home Home, tokens []token.Token) []string {
-	var out []string
+	out := make([]string, 0, len(tokens))
 	for _, tok := range tokens {
 		out = append(out, expandToken(fs, home, tok)...)
 	}

@@ -39,13 +39,13 @@ func Parse(line Line) ([]Segment, error) {
 // tokenizer accumulates tokens, the current segment, and quote state across a
 // single line. Pointer receiver: it is a single-pass mutable accumulator.
 type tokenizer struct {
+	token    strings.Builder
 	segments []Segment
 	current  Segment
-	token    strings.Builder
+	quote    rune
 	wrote    bool
 	quoted   bool
 	inQuote  bool
-	quote    rune
 	escaped  bool
 }
 
@@ -53,7 +53,7 @@ type tokenizer struct {
 func (t *tokenizer) feed(ch rune) {
 	switch {
 	case t.escaped:
-		t.token.WriteRune(ch)
+		_, _ = t.token.WriteRune(ch)
 		t.wrote = true
 		t.escaped = false
 	case t.inQuote:
@@ -71,7 +71,7 @@ func (t *tokenizer) inQuoteFeed(ch rune) {
 	case t.quote:
 		t.inQuote = false
 	default:
-		t.token.WriteRune(ch)
+		_, _ = t.token.WriteRune(ch)
 		t.wrote = true
 	}
 }
@@ -89,7 +89,7 @@ func (t *tokenizer) bareFeed(ch rune) {
 	case '|':
 		t.flushSegment()
 	default:
-		t.token.WriteRune(ch)
+		_, _ = t.token.WriteRune(ch)
 		t.wrote = true
 	}
 }

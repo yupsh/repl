@@ -69,15 +69,15 @@ func TestParseNegativePositional(t *testing.T) {
 
 func TestParseErrors(t *testing.T) {
 	cases := []struct {
-		args    Argv
 		wantErr constants.Error
+		args    Argv
 	}{
-		{Argv{"--num"}, constants.ErrFlagNeedsValue},
-		{Argv{"-n"}, constants.ErrFlagNeedsValue},
-		{Argv{"--bogus"}, constants.ErrUnknownFlag},
-		{Argv{"-z"}, constants.ErrUnknownFlag},
-		{Argv{"--num=x"}, constants.ErrInvalidNumber},
-		{Argv{"-n", "x"}, constants.ErrInvalidNumber},
+		{args: Argv{"--num"}, wantErr: constants.ErrFlagNeedsValue},
+		{args: Argv{"-n"}, wantErr: constants.ErrFlagNeedsValue},
+		{args: Argv{"--bogus"}, wantErr: constants.ErrUnknownFlag},
+		{args: Argv{"-z"}, wantErr: constants.ErrUnknownFlag},
+		{args: Argv{"--num=x"}, wantErr: constants.ErrInvalidNumber},
+		{args: Argv{"-n", "x"}, wantErr: constants.ErrInvalidNumber},
 	}
 	for _, c := range cases {
 		_, _, err := Parse(probeFlags, c.args)
@@ -145,18 +145,18 @@ func TestRangeArg(t *testing.T) {
 }
 
 func TestInt64Maker(t *testing.T) {
-	make := Int64Maker(func(n int64) any { return n })
-	if v, err := make("42"); err != nil || v.(int64) != 42 {
+	maker := Int64Maker(func(n int64) any { return n })
+	if v, err := maker("42"); err != nil || v.(int64) != 42 {
 		t.Errorf("Int64Maker(42) = %v, %v", v, err)
 	}
-	if _, err := make("x"); !errors.Is(err, constants.ErrInvalidNumber) {
+	if _, err := maker("x"); !errors.Is(err, constants.ErrInvalidNumber) {
 		t.Errorf("Int64Maker(x) err = %v", err)
 	}
 }
 
 func TestStrMaker(t *testing.T) {
-	make := StrMaker(func(s string) any { return s + "!" })
-	if v, err := make("hi"); err != nil || v.(string) != "hi!" {
+	maker := StrMaker(func(s string) any { return s + "!" })
+	if v, err := maker("hi"); err != nil || v.(string) != "hi!" {
 		t.Errorf("StrMaker(hi) = %v, %v", v, err)
 	}
 }

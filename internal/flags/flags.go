@@ -50,12 +50,12 @@ type Maker func(value Argument) (any, error)
 // maker (value-taking flags). A numeric spec has no short or long name; it
 // captures a bare "-NUM" token (the GNU head/tail shorthand) through its maker.
 type Spec struct {
+	opt      any
+	make     Maker
 	short    string
 	long     string
 	takesArg bool
 	numeric  bool
-	opt      any
-	make     Maker
 }
 
 // Set is a command's complete flag table.
@@ -66,14 +66,14 @@ func Bool(short, long string, opt any) Spec {
 	return Spec{short: short, long: long, opt: opt}
 }
 
-// Value declares a value-taking flag mapping its value through make.
-func Value(short, long string, make Maker) Spec {
-	return Spec{short: short, long: long, takesArg: true, make: make}
+// Value declares a value-taking flag mapping its value through maker.
+func Value(short, long string, maker Maker) Spec {
+	return Spec{short: short, long: long, takesArg: true, make: maker}
 }
 
-// Num declares the GNU "-NUM" shorthand, mapping the digits through make.
-func Num(make Maker) Spec {
-	return Spec{numeric: true, takesArg: true, make: make}
+// Num declares the GNU "-NUM" shorthand, mapping the digits through maker.
+func Num(maker Maker) Spec {
+	return Spec{numeric: true, takesArg: true, make: maker}
 }
 
 // lookupShort finds the spec for a short flag letter.
@@ -118,9 +118,9 @@ func (s Set) numericSpec() (Spec, bool) {
 type parser struct {
 	set        Set
 	args       Argv
-	index      int
 	opts       []any
 	positional Argv
+	index      int
 }
 
 // Parse splits args into typed flag options and positional arguments using the
