@@ -136,7 +136,7 @@ func Registry() map[Name]Builder {
 			Summary: "join lines on a common field",
 		},
 		nameJSON: {
-			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return jsoncmd.Json(o...) }),
+			Build:   filter(func(o []any) gloo.Command[[]byte, []byte] { return jsoncmd.JSON(o...) }),
 			Summary: "pretty-print JSON",
 		},
 		nameNl: {

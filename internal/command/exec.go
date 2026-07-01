@@ -31,7 +31,7 @@ func buildXargs(fs afero.Fs, positional flags.Argv, opts []any) (Segment, error)
 
 // xargsFactory builds the per-group command factory: registry first, then a
 // subprocess for any command the registry does not know.
-func xargsFactory(fs afero.Fs) xargs.CommandFor {
+func xargsFactory(fs afero.Fs) xargs.Factory {
 	reg := Registry()
 	return func(argv []string) gloo.Command[[]byte, []byte] {
 		cmd, err := commandFromArgv(fs, reg, argv)
