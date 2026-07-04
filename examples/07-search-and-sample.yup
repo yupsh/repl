@@ -1,0 +1,19 @@
+# Searching and sampling.
+
+# Keep, then drop, lines matching a pattern.
+seq 1 20 | grep 1
+seq 1 20 | grep -v 1
+
+# Case-insensitive match.
+echo Hello | grep -i hello
+
+# Count matching lines instead of printing them.
+seq 1 100 | grep -c 7
+
+# GNU "-NUM" shorthand for head/tail.
+seq 1 9 | head -3
+seq 1 9 | tail -2
+
+# Deterministic shuffle of the input lines (seeded).
+seq 1 5 | shuf --seed 1
+seq 1 10 | shuf --seed 2 -n 3

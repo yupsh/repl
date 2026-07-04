@@ -1,0 +1,27 @@
+# Field and set operations.
+
+# cut selects a field; here field 2 of comma-separated input.
+echo one,two,three | cut -d , -f 2
+
+# paste -s joins every input line onto one, with a delimiter.
+seq 1 4 | paste -s -d ,
+
+# split breaks a line into one field per line.
+echo a b c | split -d ' '
+
+# xargs regroups fields into fixed-size argument lines when given no command.
+echo 1 2 3 4 5 6 | xargs -n 2
+
+# With a command, xargs runs it once per argument group, resolving the command
+# against the registry (and falling back to a subprocess for unknown commands).
+seq 1 4 | xargs -n 2 echo
+
+# comm compares two SORTED streams; with a single stream it passes column 1.
+seq 1 3 | comm
+
+# diff renders the input against an empty second side in unified form.
+emit only-on-the-left | diff -u
+
+# join matches lines on a shared key across two streams; a single yupsh pipe has
+# just one stream, so this is a placeholder until multi-input input lands.
+emit '1 alice' | join -t ' '

@@ -1,0 +1,12 @@
+# Encoding and structured data.
+
+# base64 round-trip: encode, then decode back.
+echo secret message | base64
+echo c2VjcmV0IG1lc3NhZ2UK | base64 -d
+
+# hexdump shows the bytes of the input (canonical -C form).
+echo hi | hexdump -C
+
+# json pretty-prints JSON. Single-quote the literal so the REPL does not strip
+# the inner double quotes during tokenizing.
+emit '{"name":"yup","nested":{"n":1}}' | json
