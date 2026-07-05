@@ -96,7 +96,7 @@ func TestPlanRejectsMidPipeline(t *testing.T) {
 	}
 	cases := []struct {
 		name    string
-		wantErr constants.Error
+		wantErr error
 		stages  []Stage
 	}{
 		{

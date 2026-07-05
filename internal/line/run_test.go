@@ -3,6 +3,7 @@ package line
 import (
 	"bytes"
 	"context"
+	"errors"
 	"strings"
 	"testing"
 
@@ -162,23 +163,23 @@ func TestRunTildeExpansion(t *testing.T) {
 func TestRunErrors(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	cases := []struct {
+		wantErr error
 		line    string
-		wantErr constants.Error
 	}{
-		{"", constants.ErrEmptyCommand},
-		{"bogus", constants.ErrUnknownCommand},
-		{"wc -z", constants.ErrUnknownFlag},
-		{"grep", constants.ErrMissingArgument},
-		{"echo 'unterminated", constants.ErrUnterminatedQuote},
-		{"seq one", constants.ErrInvalidNumber},
-		{"seq 1 5 | echo hi", constants.ErrSourceMidPipeline},
-		{"cat | wc /tmp/x.txt", constants.ErrArgsMidPipeline},
-		{"seq 1 2 | basename /a/b", constants.ErrArgsMidPipeline},
+		{wantErr: constants.ErrEmptyCommand, line: ""},
+		{wantErr: constants.ErrUnknownCommand, line: "bogus"},
+		{wantErr: constants.ErrUnknownFlag, line: "wc -z"},
+		{wantErr: constants.ErrMissingArgument, line: "grep"},
+		{wantErr: constants.ErrUnterminatedQuote, line: "echo 'unterminated"},
+		{wantErr: constants.ErrInvalidNumber, line: "seq one"},
+		{wantErr: constants.ErrSourceMidPipeline, line: "seq 1 5 | echo hi"},
+		{wantErr: constants.ErrArgsMidPipeline, line: "cat | wc /tmp/x.txt"},
+		{wantErr: constants.ErrArgsMidPipeline, line: "seq 1 2 | basename /a/b"},
 	}
 	for _, c := range cases {
 		_, err := execLine(t, fs, "", c.line)
-		if err == nil || !strings.Contains(err.Error(), string(c.wantErr)) {
-			t.Errorf("Run(%q) err = %v, want %q", c.line, err, c.wantErr)
+		if !errors.Is(err, c.wantErr) {
+			t.Errorf("Run(%q) err = %v, want %v", c.line, err, c.wantErr)
 		}
 	}
 }

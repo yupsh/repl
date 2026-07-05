@@ -69,7 +69,7 @@ func TestParseNegativePositional(t *testing.T) {
 
 func TestParseErrors(t *testing.T) {
 	cases := []struct {
-		wantErr constants.Error
+		wantErr error
 		args    Argv
 	}{
 		{args: Argv{"--num"}, wantErr: constants.ErrFlagNeedsValue},

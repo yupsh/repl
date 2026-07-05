@@ -4,6 +4,7 @@ go 1.26.4
 
 require (
 	github.com/gloo-foo/framework v0.1.0
+	github.com/gomatic/go-error v0.3.0
 	github.com/spf13/afero v1.15.0
 	golang.org/x/term v0.44.0
 )

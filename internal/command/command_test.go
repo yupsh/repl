@@ -2,7 +2,6 @@ package command
 
 import (
 	"errors"
-	"strings"
 	"testing"
 
 	"github.com/spf13/afero"
@@ -104,7 +103,7 @@ func TestEveryCommandBuilds(t *testing.T) {
 func TestBuilderErrors(t *testing.T) {
 	fs := afero.NewMemMapFs()
 	cases := []struct {
-		wantErr constants.Error
+		wantErr error
 		line    []string
 	}{
 		{line: []string{"grep"}, wantErr: constants.ErrMissingArgument},
@@ -121,8 +120,8 @@ func TestBuilderErrors(t *testing.T) {
 	}
 	for _, c := range cases {
 		err := build(t, fs, c.line[0], c.line[1:]...)
-		if err == nil || !strings.Contains(err.Error(), string(c.wantErr)) {
-			t.Errorf("build %v err = %v, want %q", c.line, err, c.wantErr)
+		if !errors.Is(err, c.wantErr) {
+			t.Errorf("build %v err = %v, want %v", c.line, err, c.wantErr)
 		}
 	}
 }
