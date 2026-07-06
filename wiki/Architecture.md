@@ -38,7 +38,7 @@ repl/
 
 ### Why a hand-written parser, not urfave/cli
 
-template.cli targets `urfave/cli` apps, which parse `os.Args` once against a fixed command tree. yupsh is the opposite: it interprets *live shell lines* — pipes, quoting, runtime globbing, and per-command flag translation onto third-party `cmd-*` constructors — none of which `urfave/cli` models. So yupsh keeps its own tokenizer/expansion/flag layer and maps only the template's *structure* (the three tiers, `cmd/` entry, `internal/constants`, the gate), not its argument parser.
+template.cli targets `urfave/cli` apps, which parse `os.Args` once against a fixed command tree. yupsh is the opposite: it interprets _live shell lines_ — pipes, quoting, runtime globbing, and per-command flag translation onto third-party `cmd-*` constructors — none of which `urfave/cli` models. So yupsh keeps its own tokenizer/expansion/flag layer and maps only the template's _structure_ (the three tiers, `cmd/` entry, `internal/constants`, the gate), not its argument parser.
 
 ### The app↔orchestrator seam
 

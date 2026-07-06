@@ -6,8 +6,7 @@ Start the shell:
 yupsh
 ```
 
-Or drive it non-interactively (pipes and redirects use plain line scanning, so
-scripts are deterministic):
+Or drive it non-interactively (pipes and redirects use plain line scanning, so scripts are deterministic):
 
 ```bash
 yupsh < script.txt
@@ -18,21 +17,18 @@ yupsh < script.txt
 A pipeline's input is chosen by its **first** stage:
 
 | First stage | Input source |
-|-------------|--------------|
+| --- | --- |
 | A source command (`echo`, `seq`, `ls`, `find`, `yes`, `emit`) | the command generates the stream |
 | A filter with file arguments (`cat file.txt`, `wc -l a.txt`) | the named files, opened via the framework's `ByteFileSource` |
 | A filter with no file arguments (`grep foo`) | standard input |
 
-Later stages must be filters — a source after a pipe, or file arguments on a
-non-first stage, are reported as errors.
+Later stages must be filters — a source after a pipe, or file arguments on a non-first stage, are reported as errors.
 
 ## Shell expansion
 
-- **Globbing**: unquoted `*`, `?`, and `[…]` expand against the working
-  directory. A pattern with no matches is left literal (POSIX default).
+- **Globbing**: unquoted `*`, `?`, and `[…]` expand against the working directory. A pattern with no matches is left literal (POSIX default).
 - **Tilde**: a leading `~` or `~/…` expands to the home directory.
-- **Quoting**: single or double quotes group arguments and suppress expansion
-  (`echo '*.go'` prints `*.go`).
+- **Quoting**: single or double quotes group arguments and suppress expansion (`echo '*.go'` prints `*.go`).
 
 ```text
 yup> ls *.go

@@ -33,7 +33,7 @@ YUPSH=./bin/yupsh examples/run.sh   # reuse an existing binary instead of buildi
 
 ## Why every line starts with a source
 
-In a piped (non-interactive) session the REPL's line reader and a command's stdin are the **same** stream. A pipeline that starts with a bare filter would read the *rest of this file* as its input, so every example begins with a source (`echo`/`emit`/`seq`/`ls`/`find`/`yes`) or reads a named file. Interactively (at a TTY) the two streams are distinct, so any command works on its own.
+In a piped (non-interactive) session the REPL's line reader and a command's stdin are the **same** stream. A pipeline that starts with a bare filter would read the _rest of this file_ as its input, so every example begins with a source (`echo`/`emit`/`seq`/`ls`/`find`/`yes`) or reads a named file. Interactively (at a TTY) the two streams are distinct, so any command works on its own.
 
 ## Future: run the suite with yupsh's own `xargs`
 
