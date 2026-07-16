@@ -67,15 +67,15 @@ run-example() {
   local err="${WORK_ROOT}/${name}.err"
 
   printf >&3 '\n\033[36m▸ %s\033[0m\n' "${name}"
-  ( cd "${FIXTURES}" && HOME="${HOME_DIR}" "${YUPSH}" <"${file}" ) >"${out}" 2>"${err}" || true
+  (cd "${FIXTURES}" && HOME="${HOME_DIR}" "${YUPSH}" <"${file}") >"${out}" 2>"${err}" || true
 
   # Strip the 4-line startup banner, every "yup> " prompt (skipped comment and
   # blank lines emit bare prompts that cluster on one line), drop the resulting
   # empty lines, and indent what the commands actually produced.
-  tail -n +5 "${out}" \
-    | sed -e 's/^\(yup> \)*//' \
-    | sed -e '/^$/d' \
-    | sed -e 's/^/    /'
+  tail -n +5 "${out}" |
+    sed -e 's/^\(yup> \)*//' |
+    sed -e '/^$/d' |
+    sed -e 's/^/    /'
 
   [[ -s ${err} ]] && {
     printf >&4 '  \033[31m✗ stderr:\033[0m\n'
