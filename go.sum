@@ -82,8 +82,8 @@ github.com/gloo-foo/testable v0.1.18 h1:ei+r3E/JuqcbWmEr9aD+7eI1+edk9L0pnUH5L8dr
 github.com/gloo-foo/testable v0.1.18/go.mod h1:teCVcthskhPWThMX7W59Vmcgqs13gvEw8ZnaRRQV10w=
 github.com/gomatic/cirql v0.1.17 h1:wENbjCE9qe7hMU2eVGxB6fB9dJ1M5YYEEqMlBI1mbAI=
 github.com/gomatic/cirql v0.1.17/go.mod h1:waQbYpyUg22mtnAB7pYCTvECVU+irBUxNjNE+8fBVlo=
-github.com/gomatic/go-error v0.3.13 h1:Q2PAw8lt87XGDZQorId6MeAmHRJxT47XOK5eVAs/lr4=
-github.com/gomatic/go-error v0.3.13/go.mod h1:QVlrIcHreFp6u7n5UZiez8+eDllnV8eWP3vlDHSWnCo=
+github.com/gomatic/go-error v0.3.14 h1:dDdQ3nY4tStJH4GTZNN2DoIU8zIGr1u28SGDAJZ1xws=
+github.com/gomatic/go-error v0.3.14/go.mod h1:QVlrIcHreFp6u7n5UZiez8+eDllnV8eWP3vlDHSWnCo=
 github.com/gomatic/go-json v0.0.11 h1:vrjkL/3klgS/rUfZCOIi5xvOurRxI2uDA61VSwwTfT0=
 github.com/gomatic/go-json v0.0.11/go.mod h1:jzwXoZ++YC9Rwjlp02LUjJc4K1CBJFS08GbZQZV/OwU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
