@@ -1,0 +1,3 @@
+[![actions](https://github.com/yupsh/repl/actions/workflows/actions.yml/badge.svg)](https://github.com/yupsh/repl/actions/workflows/actions.yml) [![docs](https://github.com/yupsh/repl/actions/workflows/docs.yml/badge.svg)](https://github.com/yupsh/repl/actions/workflows/docs.yml) [![go](https://github.com/yupsh/repl/actions/workflows/go.yml/badge.svg)](https://github.com/yupsh/repl/actions/workflows/go.yml) [![release](https://github.com/yupsh/repl/actions/workflows/release.yml/badge.svg)](https://github.com/yupsh/repl/actions/workflows/release.yml) [![shell](https://github.com/yupsh/repl/actions/workflows/shell.yml/badge.svg)](https://github.com/yupsh/repl/actions/workflows/shell.yml)
+
+[docs](https://yupsh.github.io/docs.repl/)

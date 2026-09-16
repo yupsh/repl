@@ -1,0 +1,10 @@
+# External programs — yupsh shells out and pipes through them.
+#
+# Each line starts with a source so the external program has a live stdin (a
+# bare external command in a piped session would read the closed REPL stdin).
+
+# exec runs any program; cat echoes the piped input straight back.
+echo piped through cat | exec cat
+
+# git runs the system git; --version works in any directory.
+echo x | git --version
