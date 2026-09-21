@@ -6,7 +6,7 @@ require (
 	github.com/gloo-foo/framework v0.1.28
 	github.com/gomatic/go-error v0.3.18
 	github.com/spf13/afero v1.15.0
-	golang.org/x/term v0.45.0
+	golang.org/x/term v0.46.0
 )
 
 require (
@@ -53,6 +53,6 @@ require (
 	github.com/gloo-foo/cmd-wc v0.1.23
 	github.com/gloo-foo/cmd-xargs v0.1.24
 	github.com/gloo-foo/cmd-yes v0.1.23
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.40.0 // indirect
 )
